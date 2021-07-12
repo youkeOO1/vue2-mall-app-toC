@@ -15,11 +15,14 @@
   </section>
 </template>
 <script>
+import { mapActions } from 'vuex';
+import tool from '../util/tool';
+
 export default {
   data() {
     return {
       move: false,
-      index: 1,
+      index: 0,
       menuList: [
         {
           title: '时令水果',
@@ -130,6 +133,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['getSideBarList']),
     /**
      * 计算滚动值
      * @param {Number} i 索引值
@@ -142,31 +146,14 @@ export default {
       const itemWidht = e.target.offsetWidth;
       const itemLeft = e.target.getBoundingClientRect().left;
       const warpperWidth = oneTab.offsetWidth;
-      this.moveTo(oneTab.scrollLeft, itemWidht / 2 + itemLeft - warpperWidth / 2);
+      tool.moveTo(oneTab.scrollLeft, itemWidht / 2 + itemLeft - warpperWidth / 2, oneTab, 'scrollLeft');
+      console.log(this.menuList[i].title);
+      this.getSideBarList(this.menuList[i].title);
       return true;
     },
-    /**
-     * 移动到某一点
-     * @param {Number} start 起点
-     * @param {Number} end 终点
-     */
-    moveTo(start, end) {
-      // 移动距离
-      let dis = 0;
-      // 移动速度
-      let speed = 5;
-      //  当需要往右运动 也就是在滚动条中心线左侧，需要往右侧滚动才能到中心线
-      if (end < 0) {
-        speed *= -1;
-      }
-      const time = setInterval(() => {
-        dis += speed;
-        this.$refs.oneTab.scrollLeft = start + dis;
-        if (Math.abs(dis) > Math.abs(end)) {
-          clearInterval(time);
-        }
-      }, 2);
-    },
+  },
+  mounted() {
+    this.getSideBarList(this.menuList[0].title);
   },
 };
 </script>
@@ -179,6 +166,7 @@ export default {
   overflow: auto;
   &::-webkit-scrollbar {
     width: 0;
+    background: none;
   }
   .tab-item{
     width: 50px;

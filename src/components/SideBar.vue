@@ -13,7 +13,7 @@
   </section>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions, mapMutations } from 'vuex';
 import tool from '../util/tool';
 
 export default {
@@ -24,9 +24,11 @@ export default {
     };
   },
   computed: {
-    ...mapState(['sideBarList']),
+    ...mapState(['sideBarList', 'goodsList']),
   },
   methods: {
+    ...mapActions(['getGoodsList']),
+    ...mapMutations(['resetGoodList']),
     scrollTo(i, e) {
       if (this.move) return;
       this.index = i;
@@ -36,12 +38,21 @@ export default {
       const warpperTop = sideBar.getBoundingClientRect().top;
       const warpperHeight = sideBar.offsetHeight;
       tool.moveTo(sideBar.scrollTop, itemTop + itemHeight / 2 - warpperTop - warpperHeight / 2, sideBar, 'scrollTop');
+      this.resetGoodList();
+      this.getGoodsList({
+        type: this.sideBarList[i],
+        page: 1,
+        sort: 'all',
+      });
     },
   },
-  watch: {
-    sideBarList() {
-      this.index = 0;
-    },
+  mounted() {
+    this.resetGoodList();
+    this.getGoodsList({
+      type: this.sideBarList[0],
+      page: 1,
+      sort: 'all',
+    });
   },
 };
 </script>

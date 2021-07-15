@@ -1,7 +1,7 @@
 <template>
   <section class="goods-card">
     <div class="card-img">
-      <img :src="images[0]" alt="">
+      <img :src="images[0]" alt="" ref="img">
     </div>
     <div class="card-content">
       <div class="title ellipsis">{{ title}}</div>
@@ -25,14 +25,46 @@
 
 <script>
 import { mapMutations } from 'vuex';
+import Animate from '../tools/animate';
 
 export default {
   props: ['images', 'tags', 'title', 'price', 'desc', 'id', 'num'],
   methods: {
     ...mapMutations(['storageChange']),
     changeNum(id, value) {
-      console.log(id, value, 'click');
-      this.storageChange({ id, value });
+      if (value === -1) {
+        this.storageChange({ id, value });
+        return;
+      }
+      /**
+       * 购物车飞入动画
+       * startx //开始的位置
+       * starty //开始的位置
+       * endx //结束的位置
+       * endy //结束的位置
+       * src // 图片的地址
+       * width
+       * height
+       */
+      const { img } = this.$refs;
+      const { left: startX, top: startY } = img.getBoundingClientRect();
+      const { offsetWidth: width, offsetHeight: height, src } = img;
+      const shoppingCart = document.getElementById('shopping-cart');
+      const { left: cartX, top: cartY } = shoppingCart.getBoundingClientRect();
+      const { offsetWidth: cartWidth, offsetHeight: cartHeight } = shoppingCart;
+      const endX = cartX + cartWidth / 2;
+      const endY = cartY + cartHeight / 2;
+      Animate({
+        startX,
+        startY,
+        endX,
+        endY,
+        src,
+        width,
+        height,
+        id,
+        value,
+      });
     },
   },
 };

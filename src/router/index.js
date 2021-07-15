@@ -25,6 +25,11 @@ const routes = [
     ],
   },
   {
+    path: '/search',
+    name: 'search',
+    component: () => import('../views/Search.vue'),
+  },
+  {
     path: '*',
     redirect: '/',
   },

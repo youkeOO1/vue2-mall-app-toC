@@ -21,8 +21,28 @@ const getGoodsList = (type, page, size, sort) => axios.get('/getGoodsList', ({
     sort,
   },
 }));
+/**
+ * 模糊搜索
+ */
+const likeSearch = (likeValue) => axios.get('/likeSearch', ({
+  params: {
+    likeValue,
+  },
+}));
+/**
+ * 搜索商品
+ */
+const search = (type, page, size) => axios.get('/search', {
+  params: {
+    type,
+    page,
+    size,
+  },
+});
 
 export default {
   getSideList,
   getGoodsList,
+  likeSearch,
+  search,
 };

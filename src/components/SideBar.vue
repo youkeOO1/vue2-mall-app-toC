@@ -47,12 +47,12 @@ export default {
     },
   },
   mounted() {
-    this.resetGoodList();
-    this.getGoodsList({
-      type: this.sideBarList[0],
-      page: 1,
-      sort: 'all',
-    });
+    // this.resetGoodList();
+    // this.getGoodsList({
+    //   type: this.sideBarList[0],
+    //   page: 1,
+    //   sort: 'all',
+    // });
   },
 };
 </script>

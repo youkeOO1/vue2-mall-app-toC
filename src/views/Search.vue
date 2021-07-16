@@ -1,7 +1,7 @@
 <template>
   <main class="search-warp">
     <section class="search-heaher">
-      <van-icon name="arrow-left" class="arr-left" @click="$router.push('/')" />
+      <van-icon name="arrow-left" class="arr-left" @click="$router.goBack()" />
       <van-search
       class="search-content"
       v-model="value"
@@ -53,6 +53,11 @@
         </van-list>
       </section>
     </template>
+    <template v-if="isLikeShow && likeList.length === 0">
+      <section class="history-content">
+        <history :historyList="historyList" @search="onSearch"></history>
+      </section>
+    </template>
   </main>
 </template>
 
@@ -60,6 +65,7 @@
 import { mapState } from 'vuex';
 import api from '../api/index';
 import GoodsCard from '../components/GoodsCard.vue';
+import History from '../components/History.vue';
 
 export default {
   data() {
@@ -74,6 +80,7 @@ export default {
       page: 1,
       size: 5,
       isLikeShow: true,
+      historyList: [],
     };
   },
   computed: {
@@ -92,6 +99,7 @@ export default {
   },
   components: {
     GoodsCard,
+    History,
   },
   methods: {
     /**
@@ -119,16 +127,35 @@ export default {
        * 用户不适用模糊搜索直接进行搜索
        * 搜索值确定将其模糊值置为空
        * 将搜索值保存起来
+       * 添加历史记录功能
+       * 当用户进行搜索时，将其搜索值保存下来格式为[{value: string, time: date}]
+       * 当搜索值已存在数组中，更新其time属性，对数组进行重新排序按照时间的大小进行排序
+       * 只保存10条搜索记录
+       * 当满足十条记录时，将数组最后一位删除，在数组开头添加新记录
        */
       if (value) {
         this.value = value;
       } else {
         this.value = this.place;
       }
+      const result = this.historyList.find((ele) => ele.value === this.value);
+      if (result) {
+        result.time = new Date().getTime();
+        this.historyList.sort((a, b) => b.time - a.time);
+      } else {
+        this.historyList.unshift({
+          value: this.value,
+          time: new Date().getTime(),
+        });
+        if (this.historyList.length >= 10) {
+          this.historyList.pop();
+        }
+      }
       this.likeList = [];
       this.goodsList = [];
       this.isLikeShow = false;
       this.onLoad();
+      localStorage.setItem('history', JSON.stringify(this.historyList));
     },
     /**
      * 用户输入进行模糊搜索
@@ -138,7 +165,10 @@ export default {
        * 当用户啥都没有输入就搜索
        * 设置防抖
        */
-      if (!value) return false;
+      if (value === '') {
+        this.likeList = [];
+        return false;
+      }
       if (this.time) {
         clearTimeout(this.time);
         this.time = null;
@@ -168,6 +198,9 @@ export default {
       return item.replace(reg, this.value.fontcolor('red'));
     },
   },
+  created() {
+    this.historyList = JSON.parse(localStorage.getItem('history'));
+  },
 
 };
 </script>
@@ -177,6 +210,7 @@ export default {
   width: 100%;
   height: 100vh;
   background: #fff;
+  position: relative;
   z-index: 10;
   .search-heaher{
     width: 345px;
@@ -208,6 +242,13 @@ export default {
     margin: 0 auto;
     background: #fff;
     z-index: 10;
+  }
+  .history-content{
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    width: 350px;
+    z-index: 1;
   }
 }
 </style>

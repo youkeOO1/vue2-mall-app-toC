@@ -1,6 +1,5 @@
 <template>
   <section class="classify">
-    <!-- <van-search v-model="value" placeholder="请输入搜索关键词" shape="round" /> -->
     <router-link to="/search" tag="div" class="search-warp">
       <van-icon name="search" />
       <p>苹果特价1元1斤</p>
@@ -14,7 +13,7 @@
   </section>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import OneTab from '../components/OneTab.vue';
 import SideBar from '../components/SideBar.vue';
 import GoodsList from '../components/GoodsList.vue';
@@ -26,12 +25,31 @@ export default {
     };
   },
   computed: {
-    ...mapState(['showContent']),
+    ...mapState(['showContent', 'sideBarList']),
   },
   components: {
     OneTab,
     SideBar,
     GoodsList,
+  },
+  methods: {
+    ...mapActions(['getGoodsList']),
+    ...mapMutations(['resetGoodList']),
+  },
+  /**
+   * 当数据加载完成后获取商品列表
+   */
+  watch: {
+    showContent() {
+      if (this.showContent) {
+        this.resetGoodList();
+        this.getGoodsList({
+          type: this.sideBarList[0],
+          page: 1,
+          sort: 'all',
+        });
+      }
+    },
   },
 };
 </script>

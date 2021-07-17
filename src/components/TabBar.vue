@@ -28,14 +28,12 @@ export default {
     ...mapState(['counterMap']),
     badge() {
       let count = Object.values(this.counterMap).reduce((prev, next) => prev + next, 0);
-      console.log(count, 'count');
       if (count > 99) {
         count = '99+';
       }
       if (count < 1) {
         count = null;
       }
-      console.log(count);
       return count;
     },
   },

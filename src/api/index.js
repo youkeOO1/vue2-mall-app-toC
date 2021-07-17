@@ -39,10 +39,16 @@ const search = (type, page, size) => axios.get('/search', {
     size,
   },
 });
+const getGoodsByIds = (value) => axios.get('/getGoodsByIds', {
+  params: {
+    value,
+  },
+});
 
 export default {
   getSideList,
   getGoodsList,
   likeSearch,
   search,
+  getGoodsByIds,
 };

@@ -28,11 +28,15 @@ import { mapMutations } from 'vuex';
 import Animate from '../tools/animate';
 
 export default {
-  props: ['images', 'tags', 'title', 'price', 'desc', 'id', 'num'],
+  props: ['images', 'tags', 'title', 'price', 'desc', 'id', 'num', 'nofly'],
   methods: {
     ...mapMutations(['storageChange']),
     changeNum(id, value) {
       if (value === -1) {
+        this.storageChange({ id, value });
+        return;
+      }
+      if (this.nofly) {
         this.storageChange({ id, value });
         return;
       }

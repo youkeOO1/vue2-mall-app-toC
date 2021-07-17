@@ -21,7 +21,9 @@
           name="cart-o"
           id="shopping-cart"
           class="shop-car"
-          :badge="badge"/>
+          :badge="badge"
+          @click="$router.push('/shopping')"
+          />
       </template>
       </van-search>
     </section>

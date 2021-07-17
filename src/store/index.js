@@ -19,7 +19,6 @@ export default new Vuex.Store({
     },
     setGoodsList(state, list) {
       state.goodsList = [...state.goodsList, ...list];
-      console.log(state.goodsList);
     },
     resetGoodList(state) {
       state.goodsList = [];
@@ -40,9 +39,8 @@ export default new Vuex.Store({
        * 第三种情况 初始没有值，将值从null修改为1
        * 每次修改对本地缓存进行更新
        */
-      console.log(id, value, 'update');
       if (state.counterMap[id]) {
-        if (state.counterMap[id] < 2 && value === '-1') {
+        if ((state.counterMap[id] < 2 && value === -1) || value === -Infinity) {
           Vue.delete(state.counterMap, id);
         } else {
           Vue.set(state.counterMap, id, state.counterMap[id] + value);
@@ -74,7 +72,6 @@ export default new Vuex.Store({
       commit('setType', type);
       const { total, list } = await api.getGoodsList(type, page, state.size, sort);
       commit('setGoodsList', list);
-      console.log(total);
       if (total > state.goodsList.length) {
         return true;
       }
